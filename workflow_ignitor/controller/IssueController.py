@@ -1,6 +1,7 @@
 
 from workflow_ignitor.controller.Controller import Controller
 from workflow_ignitor.issue.parser.TextParser import TextParser, MissingContentError
+from workflow_ignitor.issue.IssueIntegration import IssueIntegration
 
 class IssueController( Controller ):
 	
@@ -14,7 +15,7 @@ class IssueController( Controller ):
 		try:
 			parser = self._TextParser()
 			issue = parser.parse( issueText )
-			self._reportIssue( issue, None )
+			self._reportIssue( issue, self.owner.getProject() )
 		except MissingContentError as err:
 			raise ValueError( str( err ) )
 	
@@ -22,6 +23,7 @@ class IssueController( Controller ):
 		'''
 		Reports issue to a given project.
 		'''
+		integrations = self.owner.getIntegrations( IssueIntegration )
 		
-		pass
+		list( map( lambda x: x.createIssue( issue, project ), integrations ) )
 	

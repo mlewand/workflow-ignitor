@@ -21,4 +21,4 @@ class testIssueController( BaseTestCase ):
 		self.mock.reportIssueFromText( srcText )
 		
 		textParserMock.parse.assert_called_once_with( srcText )
-		self.mock._reportIssue.assert_called_once_with( issueMock, None )
+		self.mock._reportIssue.assert_called_once_with( issueMock, self.owner.getProject() )

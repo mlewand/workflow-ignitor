@@ -32,3 +32,14 @@ class testWorkflowIgnitor( BaseTestCase ):
 		
 		self.assertRaises( TypeError, self.mock.registerIntegration, _BadIntegrationType )
 	
+	def testGetIntegrations( self ):
+		allIntegrations = ( 1, 'a', 2, dict() )
+		self.mock._integrations = allIntegrations
+		ret = self.mock.getIntegrations()
+		
+	def testGetIntegrationsFiltering( self ):
+		allIntegrations = ( 1, 'a', 2, dict() )
+		self.mock._integrations = allIntegrations
+		ret = self.mock.getIntegrations( int )
+		self.assertEqual( 2, len( ret ), 'Invalid ret lenght' )
+		self.assertTupleEqual( ( 1, 2 ), ret, 'Invalid ret value' )
