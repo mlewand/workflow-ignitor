@@ -1,3 +1,7 @@
 
+from workflow_ignitor.controller.IssueController import IssueController
+
 class WorkflowIgnitor:
-	pass
+	
+	def __init__( self ):
+		self.issues = IssueController( self )
