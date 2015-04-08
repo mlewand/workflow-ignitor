@@ -60,8 +60,8 @@ class testProject( BaseTestCase ):
 		self.mock.setProperty( 'foo.bar.baz', 'boom' )
 		props = self.mock._properties
 		
-		self.assertTrue( 'bar' in props[ 'foo' ].keys(), 'foo is not in _properties.foo dictionary' )
-		self.assertTrue( 'baz' in props[ 'foo' ][ 'bar' ].keys(), 'baz is not in _properties.foo.bar dictionary' )
+		self.assertIn( 'bar', props[ 'foo' ].keys(), 'foo is not in _properties.foo dictionary' )
+		self.assertIn( 'baz', props[ 'foo' ][ 'bar' ].keys(), 'baz is not in _properties.foo.bar dictionary' )
 		self.assertEqual( 'boom', props[ 'foo' ][ 'bar' ][ 'baz' ], 'Invalid _properties.foo.bar.baz' )
 		
 	def testGetPropertyNested( self ):
