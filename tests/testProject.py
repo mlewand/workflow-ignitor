@@ -1,9 +1,9 @@
 
+import os.path
+
 from unittest.mock import Mock, patch
 from tests.BaseTestCase import BaseTestCase
 from workflow_ignitor.Project import Project
-
-import os.path
 
 class _ProjectMock( Project ):
 	def setPath( self, path ):
