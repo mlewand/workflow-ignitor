@@ -3,7 +3,7 @@ import os
 from unittest.mock import Mock
 
 from tests.BaseTestCase import BaseTestCase
-from workflow_ignitor.issue.parser.TextParser import TextParser
+from workflow_ignitor.issue.parser.TextParser import TextParser, MissingContentError
 
 def loadFixture( filePath ):
 	with open( filePath, 'r' ) as hFile:
@@ -26,6 +26,7 @@ class testTextParser( BaseTestCase ):
 			
 		importFixture( cls, 'simplest' )
 		importFixture( cls, 'standard' )
+		importFixture( cls, 'missingDescription' )
 	
 	def setUp( self ):
 		self.mock = TextParser()
@@ -49,4 +50,24 @@ class testTextParser( BaseTestCase ):
 		self.mock.parse( self.fixtures[ 'standard' ] )
 		
 		self.mock._IssueClass.assert_called_once_with( 'This is an issue', 'This is issue description.\n\nBelive it or not - often times it will be multiline!' )
+
+	def testParseTitleOnly( self ):
+		'''
+		Ensure that nothing wrong happens if no descr is provided.
+		'''
+		expectedIssue = Mock()
+		# Use a mock as an Issue class, so later on we can check what arguments it was called with.
+		self.mock._IssueClass = Mock( return_value = expectedIssue )
 		
+		self.mock.parse( self.fixtures[ 'missingDescription' ] )
+		
+		self.mock._IssueClass.assert_called_once_with( 'Title only!', '' )
+	
+	def testParseThrowsErrorOnEmpty( self ):
+		'''
+		Ensure that parse throws exception if empty or whitespice-only string is provided.
+		'''
+		
+		self.assertRaises( MissingContentError, self.mock.parse, '' )
+		self.assertRaises( MissingContentError, self.mock.parse, ' ' )
+		self.assertRaises( MissingContentError, self.mock.parse, '\n\n\n' )

@@ -1,6 +1,12 @@
 
 from workflow_ignitor.issue.Issue import Issue
 
+class MissingContentError( Exception ):
+	'''
+	Error thrown when content to be parsed has no content.
+	'''
+	pass
+
 class TextParser:
 	
 	_IssueClass = Issue
@@ -15,7 +21,12 @@ class TextParser:
 		
 		Note that parsed content will have Unix-style line endings despite platform.
 		'''
+		strippedSource = sourceText.strip()
+		
 		lines = sourceText.splitlines()
+		
+		if len( strippedSource ) == 0:
+			raise MissingContentError()
 		
 		title, descr = lines[ 0 ], '\n'.join( lines[ 2 : ] )
 		
