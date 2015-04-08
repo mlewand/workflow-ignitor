@@ -5,7 +5,9 @@ class MissingContentError( Exception ):
 	'''
 	Error thrown when content to be parsed has no content.
 	'''
-	pass
+	
+	def __init__( self ):
+		super().__init__( 'Invalid content. Issue text should follow proper text schema.' )
 
 class TextParser:
 	
