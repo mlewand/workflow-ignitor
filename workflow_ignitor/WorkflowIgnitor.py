@@ -5,8 +5,9 @@ import json
 from workflow_ignitor.controller.IssueController import IssueController
 from workflow_ignitor.Integration import Integration
 from workflow_ignitor.Project import Project
+from workflow_ignitor.Configurable import Configurable
 
-class WorkflowIgnitor:
+class WorkflowIgnitor( Configurable ):
 	
 	def __init__( self ):
 		self.issues = IssueController( self )
@@ -14,6 +15,9 @@ class WorkflowIgnitor:
 		List of Integration derived instances.
 		'''
 		self._integrations = list()
+		
+		cfg = self._loadConfig()
+		super().__init__( cfg )
 	
 	def registerIntegration( self, IntegrationType ):
 		
@@ -36,14 +40,16 @@ class WorkflowIgnitor:
 		'''
 		Returns current project.
 		'''
-		import os
-		
 		# @TODO: fix me.
-		# Hardcoded for testing purposes.
-		proj = Project( 'workflow_ignitor', os.path.realpath( os.path.split( __file__ )[ 0 ] + os.sep + '..' ) )
-		proj.setConfig( 'github.repo.name', 'foobar' )
+		# Hardcoded for testing purposes. It should automatically detect current project.
+		curProj = self.getConfig( 'tmp.currentProject' )
 		
-		return proj
+		if not curProj:
+			raise RuntimeError( 'Missing config: tmp.currentProject' )
+		
+		projConfig = self.getConfig( 'projects.' + curProj )
+		
+		return Project( curProj, projConfig[ 'path' ], config = projConfig )
 
 	def _loadConfig( self ):
 		'''

@@ -10,7 +10,7 @@ class Project( Configurable ):
 	Currently we're strictly focused on project from a programmer POV, so it needs to be located within certian directory.
 	'''
 	
-	def __init__( self, projectId, path, properties = None ):
+	def __init__( self, projectId, path, config = None ):
 		'''
 		Constructor for Project.
 		
@@ -19,7 +19,7 @@ class Project( Configurable ):
 		self.id = projectId
 		self.setPath( path )
 		
-		super().__init__( properties )
+		super().__init__( config )
 	
 	def setPath( self, path ):
 		'''

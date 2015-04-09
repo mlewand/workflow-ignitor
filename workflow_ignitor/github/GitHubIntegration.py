@@ -9,12 +9,8 @@ class GitHubIntegration( IssueIntegration ):
 	def attach( self ):
 		super().attach()
 		
-		import json
-		
-		# This part is totally hardcoded because it's already 1am. Later on I need to create a config in main app object.
-		with open( 'config.json' ) as hFile:
-			cfg = json.loads( hFile.read() )
-			self.github = Github( cfg[ 'github.token' ] )
+		self.githubToken = self.owner.getConfig( 'github.token' )
+		self.github = Github( self.githubToken )
 	
 	def createIssue( self, issue, project ):
 		

@@ -12,8 +12,12 @@ class testWorkflowIgnitor( BaseTestCase ):
 		self.mock = WorkflowIgnitor()
 	
 	def testConstructor( self ):
-		instance = WorkflowIgnitor()
+		class __WorkflowIgnitorSub( WorkflowIgnitor ):
+			_loadConfig = Mock()
+		
+		instance = __WorkflowIgnitorSub()
 		self.assertIsInstance( instance.issues, IssueController )
+		instance._loadConfig.assert_called_once_with()
 	
 	def testRegisterIntegration( self ):
 		class _IntegrationSubtype( Integration ):
