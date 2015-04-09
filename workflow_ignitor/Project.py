@@ -1,7 +1,9 @@
 
 import os.path
 
-class Project:
+from workflow_ignitor.Configurable import Configurable
+
+class Project( Configurable ):
 	'''
 	Class to represent the project.
 	
@@ -16,7 +18,8 @@ class Project:
 		'''
 		self.id = projectId
 		self.setPath( path )
-		self._properties = properties or {}
+		
+		super().__init__( properties )
 	
 	def setPath( self, path ):
 		'''
@@ -27,39 +30,5 @@ class Project:
 			self.path = path
 		else:
 			raise IOError( 'Project directory "{0}" not found.'.format( path ) )
-	
-	def setProperty( self, name, value ):
-		'''
-		Sets custom property to a given value.
-		'''
-		if not isinstance( name, str ):
-			raise TypeError( 'Invalid type given for name. Expected {0}, while str was expected.'.format( type( name ) )  )
-		
-		parts = str( name ).split( '.' )
-		
-		curScope = self._properties
-		
-		for curPart in parts[ 0 : -1 ]:
-			if not curPart in curScope.keys():
-				curScope[ curPart ] = {}
-			
-			curScope = curScope[ curPart ]
-		
-		curScope[ parts[ -1 ] ] = value
-	
-	def getProperty( self, name ):
-		
-		parts = str( name ).split( '.' )
-		
-		curScope = self._properties
-		
-		for curPart in parts[ 0 : -1 ]:
-			if not curPart in curScope.keys():
-				return None
-			else:
-				curScope = curScope[ curPart ]
-		
-		return curScope[ parts[ -1 ] ]
-	
 	
 	

@@ -16,12 +16,12 @@ class testGitHubIntegration( BaseTestCase ):
 		issue.title = 'foo'
 		issue.descr = 'bar'
 		proj = Mock()
-		proj.getProperty = Mock( return_value = 'repoName' )
+		proj.getConfig = Mock( return_value = 'repoName' )
 		
 		self.mock.github = githubMock
 		self.mock.createIssue( issue, proj )
 		
-		proj.getProperty.assert_called_once_with( 'github.repo.name' )
+		proj.getConfig.assert_called_once_with( 'github.repo.name' )
 		
 		githubMock.get_user.assert_called_once_with()
 		githubMock.get_user().get_repo.assert_called_once_with( 'repoName' )
@@ -33,7 +33,7 @@ class testGitHubIntegration( BaseTestCase ):
 		issue.title = 'foo'
 		issue.descr = 'bar'
 		proj = Mock()
-		proj.getProperty = Mock( return_value = None )
+		proj.getConfig = Mock( return_value = None )
 		
 		self.assertRaises( RuntimeError, self.mock.createIssue, issue, proj )
 	

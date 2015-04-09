@@ -4,10 +4,10 @@ class Configurable:
 	Abstract class that provides configuration getters / setters.
 	'''
 	
-	def __init__( self ):
-		self._properties = {}
+	def __init__( self, config = None ):
+		self._config = config or {}
 	
-	def setProperty( self, name, value ):
+	def setConfig( self, name, value ):
 		'''
 		Sets custom property to a given value.
 		'''
@@ -16,7 +16,7 @@ class Configurable:
 		
 		parts = str( name ).split( '.' )
 		
-		curScope = self._properties
+		curScope = self._config
 		
 		for curPart in parts[ 0 : -1 ]:
 			if not curPart in curScope.keys():
@@ -26,11 +26,11 @@ class Configurable:
 		
 		curScope[ parts[ -1 ] ] = value
 	
-	def getProperty( self, name ):
+	def getConfig( self, name ):
 		
 		parts = str( name ).split( '.' )
 		
-		curScope = self._properties
+		curScope = self._config
 		
 		for curPart in parts[ 0 : -1 ]:
 			if not curPart in curScope.keys():

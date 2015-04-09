@@ -1,5 +1,6 @@
 
-from unittest.mock import Mock
+import os
+from unittest.mock import Mock, patch
 from tests.BaseTestCase import BaseTestCase
 from workflow_ignitor.WorkflowIgnitor import WorkflowIgnitor
 from workflow_ignitor.controller.IssueController import IssueController
@@ -43,3 +44,28 @@ class testWorkflowIgnitor( BaseTestCase ):
 		ret = self.mock.getIntegrations( int )
 		self.assertEqual( 2, len( ret ), 'Invalid ret lenght' )
 		self.assertTupleEqual( ( 1, 2 ), ret, 'Invalid ret value' )
+	
+	def testLoadConfig( self ):
+		import json
+		
+		jsonDictionary = { 'foo': 1 }
+		self.mock._getFileContent = Mock( return_value = '<configMock>' )
+		
+		with patch( 'json.loads', return_value = jsonDictionary ) as jsonLoadStringMocked:
+			ret = self.mock._loadConfig()
+			
+			self.assertEqual( 1, self.mock._getFileContent.call_count, '_getFileContent call count' )
+			self.assertIsInstance( self.mock._getFileContent.call_args[ 0 ][ 0 ], str )
+			self.assertTrue( self.mock._getFileContent.call_args[ 0 ][ 0 ].endswith( 'config.json' ) )
+			
+			jsonLoadStringMocked.assert_called_once_with( '<configMock>' )
+			self.assertEqual( jsonDictionary, ret, 'Invalid return value' )
+			
+			
+			self.assertIsInstance( ret, dict, 'Invalid type' )
+	
+	def testGetFileContent( self ):
+		ret = self.mock._getFileContent( os.sep.join( ( os.path.dirname( __file__ ), '_fixtures', 'sample.json' ) ) )
+		
+		self.assertEqual( '{"sample":true}', ret )
+	

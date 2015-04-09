@@ -18,7 +18,7 @@ class GitHubIntegration( IssueIntegration ):
 	
 	def createIssue( self, issue, project ):
 		
-		githubRepo = project.getProperty( 'github.repo.name' )
+		githubRepo = project.getConfig( 'github.repo.name' )
 		
 		if not githubRepo:
 			raise RuntimeError( 'Missing config: github.repo.name' )

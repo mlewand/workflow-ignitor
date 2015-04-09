@@ -1,4 +1,7 @@
 
+import os
+import json
+
 from workflow_ignitor.controller.IssueController import IssueController
 from workflow_ignitor.Integration import Integration
 from workflow_ignitor.Project import Project
@@ -38,8 +41,23 @@ class WorkflowIgnitor:
 		# @TODO: fix me.
 		# Hardcoded for testing purposes.
 		proj = Project( 'workflow_ignitor', os.path.realpath( os.path.split( __file__ )[ 0 ] + os.sep + '..' ) )
-		proj.setProperty( 'github.repo.name', 'foobar' )
+		proj.setConfig( 'github.repo.name', 'foobar' )
 		
 		return proj
+
+	def _loadConfig( self ):
+		'''
+		Loads local config from a JSON.
+		'''
+		
+		jsonPath = os.sep.join( ( os.path.realpath( os.path.split( __file__ )[ 0 ] ), '..', 'config.json' ) )
+		jsonContent = self._getFileContent( jsonPath )
+		
+		return json.loads( jsonContent )
+	
+	def _getFileContent( self, filePath ):
+		with open( filePath, 'r') as hFile:
+			return hFile.read()
+	
 	
 	

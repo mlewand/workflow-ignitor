@@ -12,36 +12,36 @@ class Configurable( BaseTestCase ):
 	
 	def testConstructor( self ):
 		instance = ConfigurableSubClass()
-		self.assertIsInstance( instance._properties, dict )
+		self.assertIsInstance( instance._config, dict )
 		
-	def testSetProperty( self ):
-		self.mock.setProperty( 'foo', 'bar' )
-		props = self.mock._properties
+	def testSetConfig( self ):
+		self.mock.setConfig( 'foo', 'bar' )
+		props = self.mock._config
 		
-		self.assertTrue( 'foo' in props.keys(), 'foo is not in _properties dictionary' )
-		self.assertEqual( 'bar', props[ 'foo' ], 'Invalid _properties.foo' )
+		self.assertTrue( 'foo' in props.keys(), 'foo is not in _config dictionary' )
+		self.assertEqual( 'bar', props[ 'foo' ], 'Invalid _config.foo' )
 
-	def testSetPropertyNested( self ):
+	def testSetConfigNested( self ):
 		
-		self.mock.setProperty( 'foo.bar.baz', 'boom' )
-		props = self.mock._properties
+		self.mock.setConfig( 'foo.bar.baz', 'boom' )
+		props = self.mock._config
 		
-		self.assertIn( 'bar', props[ 'foo' ].keys(), 'foo is not in _properties.foo dictionary' )
-		self.assertIn( 'baz', props[ 'foo' ][ 'bar' ].keys(), 'baz is not in _properties.foo.bar dictionary' )
-		self.assertEqual( 'boom', props[ 'foo' ][ 'bar' ][ 'baz' ], 'Invalid _properties.foo.bar.baz' )
+		self.assertIn( 'bar', props[ 'foo' ].keys(), 'foo is not in _config.foo dictionary' )
+		self.assertIn( 'baz', props[ 'foo' ][ 'bar' ].keys(), 'baz is not in _config.foo.bar dictionary' )
+		self.assertEqual( 'boom', props[ 'foo' ][ 'bar' ][ 'baz' ], 'Invalid _config.foo.bar.baz' )
 		
-	def testGetPropertyNested( self ):
+	def testGetConfigNested( self ):
 		
-		self.mock._properties = {
+		self.mock._config = {
 			'abc': {
 				'def': {
 					'ghi': 'foobar'
 				}
 			}
 		}
-		self.assertEqual( 'foobar', self.mock.getProperty( 'abc.def.ghi' ), 'Invalid return value' )
+		self.assertEqual( 'foobar', self.mock.getConfig( 'abc.def.ghi' ), 'Invalid return value' )
 		
-	def testGetPropertyInvalid( self ):
+	def testGetConfigInvalid( self ):
 		
-		self.mock._properties = {}
-		self.assertEqual( None, self.mock.getProperty( 'abc.def.ghi' ), 'Invalid return value' )
+		self.mock._config = {}
+		self.assertEqual( None, self.mock.getConfig( 'abc.def.ghi' ), 'Invalid return value' )
