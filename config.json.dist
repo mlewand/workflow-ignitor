@@ -1,0 +1,18 @@
+{
+	"github": {
+		"token": ""
+	},
+	"tmp": {
+		"currentProject": "foobar"
+	},
+	"projects": {
+		"foobar": {
+			"path": "/my/path/to/project",
+			"github": {
+				"repo": {
+					"name": "foobar"
+				}
+			}
+		}
+	}
+}
