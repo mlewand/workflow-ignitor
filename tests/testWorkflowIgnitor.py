@@ -13,11 +13,14 @@ class WorkflowIgnitorMock( WorkflowIgnitor ):
 	def __init__( self, *args, **kwargs ):
 		self._config = {}
 		self.lang = {}
+		self.parser = Mock()
 		
 		super().__init__( *args, **kwargs )
+		
 	
 	_loadConfig = Mock( return_value = {} )
 	_loadLang = Mock()
+	_registerCommandParser = Mock()
 
 class testWorkflowIgnitor( BaseTestCase ):
 	
@@ -127,3 +130,19 @@ class testWorkflowIgnitor( BaseTestCase ):
 		mockedGetFileContent = Mock( side_effect = FileNotFoundError( 'foo' ) )
 		mock._getFileContent = mockedGetFileContent
 		self.assertRaisesRegex( RuntimeError, '^Language file \"foo\.json\" not found\. Check \/lang file for available langs\.$', mock._loadLang, 'foo' )
+	
+	def testRegisterCommandParser( self ):
+		lang = {
+			"app": {
+				"name": "foo",
+				"descr": "bar"
+			}
+		}
+		mock = Mock()
+		mock.lang = lang
+		parser = Mock()
+		with patch( 'argparse.ArgumentParser', return_value = parser ) as argParserMock:
+			WorkflowIgnitor._registerCommandParser( mock )
+			
+			argParserMock.assert_called_once_with( prog = 'foo', description = 'bar' )
+			self.assertEqual( parser, mock.parser, 'Invalid mock.parser value' )

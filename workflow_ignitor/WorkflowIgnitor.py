@@ -88,6 +88,5 @@ class WorkflowIgnitor( Configurable ):
 			return hFile.read()
 	
 	def _registerCommandParser( self ):
-		self.parser = argparse.ArgumentParser( prog = 'Workflow Ignitor' )
-	
-	
+		appLang = self.lang[ 'app' ]
+		self.parser = argparse.ArgumentParser( prog = appLang[ 'name' ], description = appLang[ 'descr' ] )
