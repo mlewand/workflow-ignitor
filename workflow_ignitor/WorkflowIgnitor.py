@@ -11,16 +11,16 @@ from workflow_ignitor.Configurable import Configurable
 class WorkflowIgnitor( Configurable ):
 	
 	def __init__( self ):
-		self.issues = IssueController( self )
+		cfg = self._loadConfig()
+		super().__init__( cfg )
+		
 		'''
 		List of Integration derived instances.
 		'''
 		self._integrations = list()
 		
-		cfg = self._loadConfig()
-		super().__init__( cfg )
-		
 		self._loadLang( cfg[ 'lang' ] if 'lang' in cfg.keys() else 'en' )
+		self._loadControllers()
 		
 	def start( self, args ):
 		pass
@@ -56,6 +56,9 @@ class WorkflowIgnitor( Configurable ):
 		projConfig = self.getConfig( 'projects.' + curProj )
 		
 		return Project( curProj, projConfig[ 'path' ], config = projConfig )
+
+	def _loadControllers( self ):
+		self.issues = IssueController( self )
 
 	def _loadConfig( self ):
 		'''

@@ -31,9 +31,10 @@ class testWorkflowIgnitor( BaseTestCase ):
 		class __WorkflowIgnitorSub( WorkflowIgnitor ):
 			_loadConfig = Mock( return_value = {} )
 			_loadLang = Mock()
+			_loadControllers = Mock()
 		
 		instance = __WorkflowIgnitorSub()
-		self.assertIsInstance( instance.issues, IssueController )
+		instance._loadControllers.assert_called_once_with()
 		instance._loadConfig.assert_called_once_with()
 		# Since no lang is in config, app should load en lang.
 		instance._loadLang.assert_called_once_with( 'en' )
@@ -130,6 +131,11 @@ class testWorkflowIgnitor( BaseTestCase ):
 		mockedGetFileContent = Mock( side_effect = FileNotFoundError( 'foo' ) )
 		mock._getFileContent = mockedGetFileContent
 		self.assertRaisesRegex( RuntimeError, '^Language file \"foo\.json\" not found\. Check \/lang file for available langs\.$', mock._loadLang, 'foo' )
+	
+	def testLoadControllers( self ):
+		mock = Mock()
+		WorkflowIgnitor._loadControllers( mock )
+		self.assertIsInstance( mock.issues, IssueController )
 	
 	def testRegisterCommandParser( self ):
 		lang = {
