@@ -73,3 +73,30 @@ class testWorkflowIgnitor( BaseTestCase ):
 		
 		self.assertEqual( '{"sample":true}', ret )
 	
+	def testLoadLang( self ):
+		
+		l11nDict = {}
+		mockedGetFileContent = Mock( return_value = 'localizedContent' )
+		self.mock._getFileContent = mockedGetFileContent
+		
+		with patch( 'json.loads', return_value = l11nDict ) as jsonLoadStringMocked:
+			ret = self.mock._loadLang( 'foob' )
+			
+			self.assertEqual( 1, mockedGetFileContent.call_count, 'Invalid _getFileContent call count' )
+			# Checking argument given to _getFileContent.
+			firstArg = mockedGetFileContent.call_args[ 0 ][ 0 ]
+			self.assertIsInstance( firstArg, str, 'Invalid first arg type' )
+			self.assertTrue( firstArg.endswith( 'foob.json' ), '_getFileContent arg 0 ("{0}") does not end with foob.json'.format( firstArg ) )
+			
+			jsonLoadStringMocked.assert_called_once_with( 'localizedContent' )
+			
+			self.assertEqual( l11nDict, self.mock.lang, 'Invalid dictionary' )
+			
+			self.assertTrue( ret, 'Invalid ret value' )
+	
+	def testLoadLangMissing( self ):
+		
+		l11nDict = {}
+		mockedGetFileContent = Mock( side_effect = FileNotFoundError( 'foo' ) )
+		self.mock._getFileContent = mockedGetFileContent
+		self.assertRaisesRegex( RuntimeError, '^Language file \"foo\.json\" not found\. Check \/lang file for available langs\.$', self.mock._loadLang, 'foo' )

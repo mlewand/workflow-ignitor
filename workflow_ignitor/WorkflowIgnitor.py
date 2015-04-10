@@ -1,6 +1,7 @@
 
 import os
 import json
+import argparse
 
 from workflow_ignitor.controller.IssueController import IssueController
 from workflow_ignitor.Integration import Integration
@@ -18,6 +19,9 @@ class WorkflowIgnitor( Configurable ):
 		
 		cfg = self._loadConfig()
 		super().__init__( cfg )
+		
+	def start( self, args ):
+		pass
 	
 	def registerIntegration( self, IntegrationType ):
 		
@@ -61,9 +65,27 @@ class WorkflowIgnitor( Configurable ):
 		
 		return json.loads( jsonContent )
 	
+	def _loadLang( self, langCode ):
+		'''
+		Loads language file with given code.
+		'''
+		
+		fileName = langCode + '.json'
+		jsonPath = os.sep.join( ( os.path.realpath( os.path.split( __file__ )[ 0 ] ), '..', fileName ) )
+		
+		try:
+			jsonContent = self._getFileContent( jsonPath )
+			self.lang = json.loads( jsonContent )
+		except FileNotFoundError as err:
+			raise RuntimeError( 'Language file "{0}" not found. Check /lang file for available langs.'.format( fileName ) )
+		
+		return True
+	
 	def _getFileContent( self, filePath ):
 		with open( filePath, 'r') as hFile:
 			return hFile.read()
 	
+	def _registerCommandParser( self ):
+		self.parser = argparse.ArgumentParser( prog = 'Workflow Ignitor' )
 	
 	
