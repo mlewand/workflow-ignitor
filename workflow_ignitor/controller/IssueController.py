@@ -7,6 +7,13 @@ class IssueController( Controller ):
 	
 	_TextParser = TextParser
 	
+	def process( self, args ):
+		'''
+		Looks for args, and based on that executes proper logic.
+		'''
+		
+		pass
+	
 	def reportIssueFromText( self, issueText ):
 		'''
 		Reports issue based on plain text provided as `issueText`.

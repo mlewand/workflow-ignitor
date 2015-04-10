@@ -59,6 +59,7 @@ class WorkflowIgnitor( Configurable ):
 
 	def _loadControllers( self ):
 		self.issues = IssueController( self )
+		self.issues.attach()
 
 	def _loadConfig( self ):
 		'''
