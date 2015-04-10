@@ -1,5 +1,5 @@
 {
-	"application": {
+	"app": {
 		"name": "Workflow Ignitor",
 		"descr": "Small app to make project development a little bit faster."
 	}
