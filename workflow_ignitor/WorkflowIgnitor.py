@@ -20,6 +20,7 @@ class WorkflowIgnitor( Configurable ):
 		self._integrations = list()
 		
 		self._loadLang( cfg[ 'lang' ] if 'lang' in cfg.keys() else 'en' )
+		self._registerCommandParser()
 		self._loadControllers()
 		
 	def start( self, args ):

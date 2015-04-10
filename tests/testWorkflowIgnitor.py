@@ -36,6 +36,7 @@ class testWorkflowIgnitor( BaseTestCase ):
 		instance._loadConfig.assert_called_once_with()
 		# Since no lang is in config, app should load en lang.
 		instance._loadLang.assert_called_once_with( 'en' )
+		instance._registerCommandParser.assert_called_once_with()
 		
 	def testConstructorCustomLang( self ):
 		class __WorkflowIgnitorSub( WorkflowIgnitorMock ):
