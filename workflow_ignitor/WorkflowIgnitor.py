@@ -20,6 +20,8 @@ class WorkflowIgnitor( Configurable ):
 		cfg = self._loadConfig()
 		super().__init__( cfg )
 		
+		self._loadLang( cfg[ 'lang' ] if 'lang' in cfg.keys() else 'en' )
+		
 	def start( self, args ):
 		pass
 	
@@ -71,7 +73,7 @@ class WorkflowIgnitor( Configurable ):
 		'''
 		
 		fileName = langCode + '.json'
-		jsonPath = os.sep.join( ( os.path.realpath( os.path.split( __file__ )[ 0 ] ), '..', fileName ) )
+		jsonPath = os.sep.join( ( os.path.realpath( os.path.split( __file__ )[ 0 ] ), '..', 'lang', fileName ) )
 		
 		try:
 			jsonContent = self._getFileContent( jsonPath )

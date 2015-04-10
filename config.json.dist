@@ -1,4 +1,7 @@
 {
+	"app": {
+		"lang": "en"
+	},
 	"github": {
 		"token": ""
 	},
