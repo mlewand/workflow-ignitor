@@ -6,10 +6,23 @@ from workflow_ignitor.WorkflowIgnitor import WorkflowIgnitor
 from workflow_ignitor.controller.IssueController import IssueController
 from workflow_ignitor.Integration import Integration
 
+class WorkflowIgnitorMock( WorkflowIgnitor ):
+	'''
+	Mocked WorkflowIgnitor class, that will work on fixtures rather than real IO resources.
+	'''
+	def __init__( self, *args, **kwargs ):
+		self._config = {}
+		self.lang = {}
+		
+		super().__init__( *args, **kwargs )
+	
+	_loadConfig = Mock( return_value = {} )
+	_loadLang = Mock()
+
 class testWorkflowIgnitor( BaseTestCase ):
 	
 	def setUp( self ):
-		self.mock = WorkflowIgnitor()
+		self.mock = WorkflowIgnitorMock()
 	
 	def testConstructor( self ):
 		class __WorkflowIgnitorSub( WorkflowIgnitor ):
@@ -62,16 +75,17 @@ class testWorkflowIgnitor( BaseTestCase ):
 	
 	def testLoadConfig( self ):
 		import json
+		mock = WorkflowIgnitor()
 		
 		jsonDictionary = { 'foo': 1 }
-		self.mock._getFileContent = Mock( return_value = '<configMock>' )
+		mock._getFileContent = Mock( return_value = '<configMock>' )
 		
 		with patch( 'json.loads', return_value = jsonDictionary ) as jsonLoadStringMocked:
-			ret = self.mock._loadConfig()
+			ret = mock._loadConfig()
 			
-			self.assertEqual( 1, self.mock._getFileContent.call_count, '_getFileContent call count' )
-			self.assertIsInstance( self.mock._getFileContent.call_args[ 0 ][ 0 ], str )
-			self.assertTrue( self.mock._getFileContent.call_args[ 0 ][ 0 ].endswith( 'config.json' ) )
+			self.assertEqual( 1, mock._getFileContent.call_count, '_getFileContent call count' )
+			self.assertIsInstance( mock._getFileContent.call_args[ 0 ][ 0 ], str )
+			self.assertTrue( mock._getFileContent.call_args[ 0 ][ 0 ].endswith( 'config.json' ) )
 			
 			jsonLoadStringMocked.assert_called_once_with( '<configMock>' )
 			self.assertEqual( jsonDictionary, ret, 'Invalid return value' )
@@ -85,13 +99,14 @@ class testWorkflowIgnitor( BaseTestCase ):
 		self.assertEqual( '{"sample":true}', ret )
 	
 	def testLoadLang( self ):
+		mock = WorkflowIgnitor()
 		
 		l11nDict = {}
 		mockedGetFileContent = Mock( return_value = 'localizedContent' )
-		self.mock._getFileContent = mockedGetFileContent
+		mock._getFileContent = mockedGetFileContent
 		
 		with patch( 'json.loads', return_value = l11nDict ) as jsonLoadStringMocked:
-			ret = self.mock._loadLang( 'foob' )
+			ret = mock._loadLang( 'foob' )
 			
 			self.assertEqual( 1, mockedGetFileContent.call_count, 'Invalid _getFileContent call count' )
 			# Checking argument given to _getFileContent.
@@ -101,13 +116,14 @@ class testWorkflowIgnitor( BaseTestCase ):
 			
 			jsonLoadStringMocked.assert_called_once_with( 'localizedContent' )
 			
-			self.assertEqual( l11nDict, self.mock.lang, 'Invalid dictionary' )
+			self.assertEqual( l11nDict, mock.lang, 'Invalid dictionary' )
 			
 			self.assertTrue( ret, 'Invalid ret value' )
 	
 	def testLoadLangMissing( self ):
+		mock = WorkflowIgnitor()
 		
 		l11nDict = {}
 		mockedGetFileContent = Mock( side_effect = FileNotFoundError( 'foo' ) )
-		self.mock._getFileContent = mockedGetFileContent
-		self.assertRaisesRegex( RuntimeError, '^Language file \"foo\.json\" not found\. Check \/lang file for available langs\.$', self.mock._loadLang, 'foo' )
+		mock._getFileContent = mockedGetFileContent
+		self.assertRaisesRegex( RuntimeError, '^Language file \"foo\.json\" not found\. Check \/lang file for available langs\.$', mock._loadLang, 'foo' )
