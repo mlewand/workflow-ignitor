@@ -11,16 +11,19 @@ class WorkflowIgnitorMock( WorkflowIgnitor ):
 	Mocked WorkflowIgnitor class, that will work on fixtures rather than real IO resources.
 	'''
 	def __init__( self, *args, **kwargs ):
-		self._config = {}
+		# Mocking essential methods.
+		self._loadConfig = Mock( return_value = self._getMockConfig() )
+		self._loadLang = Mock()
+		self._registerCommandParser = Mock()
+		self._loadControllers = Mock()
+		
 		self.lang = {}
 		self.parser = Mock()
 		
 		super().__init__( *args, **kwargs )
-		
 	
-	_loadConfig = Mock( return_value = {} )
-	_loadLang = Mock()
-	_registerCommandParser = Mock()
+	def _getMockConfig( self ):
+		return {}
 
 class testWorkflowIgnitor( BaseTestCase ):
 	
@@ -28,21 +31,16 @@ class testWorkflowIgnitor( BaseTestCase ):
 		self.mock = WorkflowIgnitorMock()
 	
 	def testConstructor( self ):
-		class __WorkflowIgnitorSub( WorkflowIgnitor ):
-			_loadConfig = Mock( return_value = {} )
-			_loadLang = Mock()
-			_loadControllers = Mock()
-		
-		instance = __WorkflowIgnitorSub()
+		instance = WorkflowIgnitorMock()
 		instance._loadControllers.assert_called_once_with()
 		instance._loadConfig.assert_called_once_with()
 		# Since no lang is in config, app should load en lang.
 		instance._loadLang.assert_called_once_with( 'en' )
 		
 	def testConstructorCustomLang( self ):
-		class __WorkflowIgnitorSub( WorkflowIgnitor ):
-			_loadConfig = Mock( return_value = { 'lang': 'nl' } )
-			_loadLang = Mock()
+		class __WorkflowIgnitorSub( WorkflowIgnitorMock ):
+			def _getMockConfig( self ):
+				return { 'lang': 'nl' }
 		
 		instance = __WorkflowIgnitorSub()
 		instance._loadLang.assert_called_once_with( 'nl' )
@@ -79,13 +77,13 @@ class testWorkflowIgnitor( BaseTestCase ):
 	
 	def testLoadConfig( self ):
 		import json
-		mock = WorkflowIgnitor()
+		mock = Mock()
 		
 		jsonDictionary = { 'foo': 1 }
 		mock._getFileContent = Mock( return_value = '<configMock>' )
 		
 		with patch( 'json.loads', return_value = jsonDictionary ) as jsonLoadStringMocked:
-			ret = mock._loadConfig()
+			ret = WorkflowIgnitor._loadConfig( mock )
 			
 			self.assertEqual( 1, mock._getFileContent.call_count, '_getFileContent call count' )
 			self.assertIsInstance( mock._getFileContent.call_args[ 0 ][ 0 ], str )
@@ -103,14 +101,14 @@ class testWorkflowIgnitor( BaseTestCase ):
 		self.assertEqual( '{"sample":true}', ret )
 	
 	def testLoadLang( self ):
-		mock = WorkflowIgnitor()
+		mock = Mock()
 		
 		l11nDict = {}
 		mockedGetFileContent = Mock( return_value = 'localizedContent' )
 		mock._getFileContent = mockedGetFileContent
 		
 		with patch( 'json.loads', return_value = l11nDict ) as jsonLoadStringMocked:
-			ret = mock._loadLang( 'foob' )
+			ret = WorkflowIgnitor._loadLang( mock, 'foob' )
 			
 			self.assertEqual( 1, mockedGetFileContent.call_count, 'Invalid _getFileContent call count' )
 			# Checking argument given to _getFileContent.
@@ -125,12 +123,12 @@ class testWorkflowIgnitor( BaseTestCase ):
 			self.assertTrue( ret, 'Invalid ret value' )
 	
 	def testLoadLangMissing( self ):
-		mock = WorkflowIgnitor()
+		mock = Mock()
 		
 		l11nDict = {}
 		mockedGetFileContent = Mock( side_effect = FileNotFoundError( 'foo' ) )
 		mock._getFileContent = mockedGetFileContent
-		self.assertRaisesRegex( RuntimeError, '^Language file \"foo\.json\" not found\. Check \/lang file for available langs\.$', mock._loadLang, 'foo' )
+		self.assertRaisesRegex( RuntimeError, '^Language file \"foo\.json\" not found\. Check \/lang file for available langs\.$', WorkflowIgnitor._loadLang, mock, 'foo' )
 	
 	def testLoadControllers( self ):
 		mock = Mock()
