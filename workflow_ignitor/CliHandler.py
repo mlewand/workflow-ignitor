@@ -1,8 +1,12 @@
 
+import argparse
+
 class CliHandler:
 	
 	def __init__( self, owner ):
+		self.owner = owner
 		self._actionMapping = {}
+		self.parser = self._createParser()
 	
 	def registerController( self, controller ):
 		'''
@@ -16,4 +20,8 @@ class CliHandler:
 	
 	def parse( self, args ):
 		pass
+	
+	def _createParser( self ):
+		appLang = self.owner.lang[ 'app' ]
+		self.parser = argparse.ArgumentParser( prog = appLang[ 'name' ], description = appLang[ 'descr' ] )
 	
