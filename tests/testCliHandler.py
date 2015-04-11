@@ -23,3 +23,15 @@ class testCliHandler( BaseTestCase ):
 		
 		self.assertIn( 'foo', mock._actionMapping.keys(), 'Missing _actionMapping key' )
 		self.assertEqual( mock._actionMapping[ 'foo' ], controller, 'Invalid _actionMapping.foo value' )
+	
+	def testRegisterControllerInvalid( self ):
+		'''
+		Ensure that exception is thrown if the controller has empty cliAction string.
+		'''
+		
+		controller = Mock()
+		controller.cliAction = ''
+		mock = Mock()
+		mock._actionMapping = {}
+		
+		self.assertRaisesRegex( ValueError, '^Registered controller must have non-empty cliAction$', CliHandler.registerController, mock, controller )

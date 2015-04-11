@@ -10,7 +10,7 @@ class CliHandler:
 		'''
 		
 		if not controller.cliAction:
-			pass
+			raise ValueError( 'Registered controller must have non-empty cliAction' )
 		
 		self._actionMapping[ controller.cliAction ] = controller
 	
