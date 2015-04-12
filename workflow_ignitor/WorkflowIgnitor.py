@@ -39,7 +39,7 @@ class WorkflowIgnitor( Configurable ):
 			# https://docs.python.org/2/library/sys.html#sys.exit
 			exit( 2 )
 		else:
-			self._loadCliSettings( ret )
+			self._loadCliSettings( ret[ 1 ] )
 			
 			ret[ 0 ].process( ret[ 1 ] )
 	

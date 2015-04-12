@@ -52,7 +52,7 @@ class testWorkflowIgnitor( BaseTestCase ):
 		
 		parsingResult[ 0 ].process.assert_called_once_with( parsingResult[ 1 ] )
 		
-		mock._loadCliSettings.assert_called_once_with( parsingResult )
+		mock._loadCliSettings.assert_called_once_with( parsingResult[ 1 ] )
 	
 	def testStartInvalid( self ):
 		'''
