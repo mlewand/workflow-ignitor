@@ -1,6 +1,13 @@
 {
 	"app": {
 		"name": "Workflow Ignitor",
-		"descr": "Small app to make project development a little bit faster."
+		"descr": "Small app to make project development a little bit faster.",
+		"issues": {
+			"cli": {
+				"issuesAction": "Issues manipulation.",
+				"issuesSubAction": "Subcommand to be performed.",
+				"file": "File to be used as an issue source."
+			}
+		}
 	}
 }
