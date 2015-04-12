@@ -64,9 +64,7 @@ class WorkflowIgnitor( Configurable ):
 		'''
 		Returns current project.
 		'''
-		# @TODO: fix me.
-		# Hardcoded for testing purposes. It should automatically detect current project.
-		curProj = self.getConfig( 'tmp.currentProject' )
+		curProj = self.curProject
 		
 		if not curProj:
 			raise RuntimeError( 'Missing config: tmp.currentProject' )
