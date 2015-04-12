@@ -1,5 +1,5 @@
 
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, call
 from io import StringIO
 import sys, os
 
@@ -7,6 +7,23 @@ from tests.BaseTestCase import BaseTestCase
 from workflow_ignitor.controller.IssueController import IssueController
 
 class testIssueController( BaseTestCase ):
+	
+	issuesLangDict = {
+		"app": {
+			"issues": {
+				"cli": {
+					"issuesAction": "Issues manipulation.",
+					"issuesSubAction": "Subcommand to be performed.",
+					"file": "File to be used as an issue source.",
+					"stdin": "If set will read issue source form stdin."
+				},
+				"create": {
+					"title": "Issue title: ",
+					"descr": "Issue desription: "
+				}
+			}
+		}
+	}
 	
 	def setUp( self ):
 		self.owner = Mock()
@@ -25,15 +42,22 @@ class testIssueController( BaseTestCase ):
 		textParserMock.parse.assert_called_once_with( srcText )
 		self.mock._reportIssue.assert_called_once_with( issueMock, self.owner.getProject() )
 	
+	def testActionCreate( self ):
+		mock = Mock()
+		mock.owner.lang = self.issuesLangDict
+		args = Mock()
+		IssueController.actionCreate( mock, args )
+		mock._readCliLine.assert_has_calls( [ call( 'Issue title: ' ), call( 'Issue desription: ' ) ] )
+		
 	@patch( '__main__.sys.stdin', StringIO( 'foo\n\nbar' ) )
 	def testActionCreateStdin( self ):
 		'''
 		Ensure that stdin input is taken by default.
 		'''
-		
 		mock = Mock()
+		mock.owner.lang = self.issuesLangDict
 		args = Mock()
-		args.file = None
+		args.stdin = True
 		IssueController.actionCreate( mock, args )
 		
 		mock.reportIssueFromText.assert_called_once_with( 'foo\n\nbar' )
@@ -41,15 +65,17 @@ class testIssueController( BaseTestCase ):
 	@patch( '__main__.sys.stdin', StringIO( '' ) )
 	def testActionCreateStdinEmpty( self ):
 		mock = Mock()
+		mock.owner.lang = self.issuesLangDict
 		args = Mock()
-		args.file = None
+		args.stdin = True
 		self.assertRaisesRegex( RuntimeError, '^Empty buffer given to stdin. You\'re supposed to provide issue content with stdin\.$', IssueController.actionCreate, mock, args )
 	
 	@patch( '__main__.sys.stdin', StringIO( ' \t\n\t ' ) )
 	def testActionCreateStdinWhitespace( self ):
 		mock = Mock()
+		mock.owner.lang = self.issuesLangDict
 		args = Mock()
-		args.file = None
+		args.stdin = True
 		self.assertRaisesRegex( RuntimeError, '^Empty buffer given to stdin. You\'re supposed to provide issue content with stdin\.$', IssueController.actionCreate, mock, args )
 
 	@patch( '__main__.sys.stdin' )
@@ -75,6 +101,7 @@ class testIssueController( BaseTestCase ):
 		'''
 		
 		mock = Mock()
+		mock.owner.lang = self.issuesLangDict
 		args = Mock()
 		testBaseDir = os.path.split( os.path.realpath( __file__ ) )[ 0 ]
 		args.file = os.sep.join( ( testBaseDir, '_fixtures', 'issueSource.md' ) )
@@ -93,6 +120,7 @@ class testIssueController( BaseTestCase ):
 		'''
 		
 		mock = Mock()
+		mock.owner.lang = self.issuesLangDict
 		args = Mock()
 		testBaseDir = os.path.split( os.path.realpath( __file__ ) )[ 0 ]
 		args.file = os.sep.join( ( testBaseDir, '_fixtures', 'emptyFile.md' ) )

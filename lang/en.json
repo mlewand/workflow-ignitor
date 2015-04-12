@@ -8,6 +8,10 @@
 				"issuesSubAction": "Subcommand to be performed.",
 				"file": "File to be used as an issue source.",
 				"stdin": "If set will read issue source form stdin."
+			},
+			"create": {
+				"title": "Issue title: ",
+				"descr": "Issue desription: "
 			}
 		},
 		"cli": {
