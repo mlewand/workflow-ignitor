@@ -10,6 +10,11 @@ from workflow_ignitor.CliHandler import CliHandler
 
 class WorkflowIgnitor( Configurable ):
 	
+	'''
+	Id of the current project.
+	'''
+	curProject = ''
+	
 	def __init__( self ):
 		cfg = self._loadConfig()
 		super().__init__( cfg )
@@ -24,6 +29,8 @@ class WorkflowIgnitor( Configurable ):
 		self._loadControllers()
 		
 	def start( self, args ):
+		self.curProject = self.getConfig( 'tmp.currentProject' )
+		
 		ret = self.cli.parse( args )
 		
 		if not ret:
@@ -32,6 +39,8 @@ class WorkflowIgnitor( Configurable ):
 			# https://docs.python.org/2/library/sys.html#sys.exit
 			exit( 2 )
 		else:
+			self._loadCliSettings( ret )
+			
 			ret[ 0 ].process( ret[ 1 ] )
 	
 	def registerIntegration( self, IntegrationType ):
@@ -96,6 +105,14 @@ class WorkflowIgnitor( Configurable ):
 			raise RuntimeError( 'Language file "{0}" not found. Check /lang file for available langs.'.format( fileName ) )
 		
 		return True
+
+	def _loadCliSettings( self, args ):
+		'''
+		Checks CLI args for some global settings switches.
+		'''
+		
+		if args.project:
+			self.curProject = args.project
 	
 	def _getFileContent( self, filePath ):
 		with open( filePath, 'r') as hFile:
