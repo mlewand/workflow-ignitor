@@ -34,7 +34,9 @@ You add a project by... manually adding it to `config.json` (Hell, yeah)!
 
 ### Changing Current Project
 
-As of now current project is determined solely based on `config.json`. Open `config.json` and set `currentProject.tmp` to the key of your project in `projects` object. E.g.
+As of now current project is determined based on `config.json`. Open `config.json` and set `currentProject.tmp` to the key of your project in `projects` object. E.g.
+
+This might be overridden by `--project` CLI option.
 
 ```json
 {
