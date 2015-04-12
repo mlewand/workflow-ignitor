@@ -5,6 +5,7 @@ from tests.BaseTestCase import BaseTestCase
 from workflow_ignitor.WorkflowIgnitor import WorkflowIgnitor
 from workflow_ignitor.controller.IssueController import IssueController
 from workflow_ignitor.Integration import Integration
+from workflow_ignitor.CliHandler import CliHandler
 
 class WorkflowIgnitorMock( WorkflowIgnitor ):
 	'''
@@ -37,7 +38,23 @@ class testWorkflowIgnitor( BaseTestCase ):
 		# Since no lang is in config, app should load en lang.
 		instance._loadLang.assert_called_once_with( 'en' )
 		instance._registerCommandParser.assert_called_once_with()
+	
+	def testStart( self ):
+		mock = Mock()
+		parsingResult = ( Mock(), Mock() )
+		mock.cli.parse = Mock( return_value = parsingResult )
+		WorkflowIgnitor.start( mock, [] )
 		
+		parsingResult[ 0 ].process.assert_called_once_with( parsingResult[ 1 ] )
+	
+	def testStartInvalid( self ):
+		'''
+		If invalid parsing result will trigger error code 2.
+		'''
+		mock = Mock()
+		mock.cli.parse = Mock( return_value = None )
+		self.assertRaisesRegex( SystemExit, '^2$', WorkflowIgnitor.start, mock, [] )
+	
 	def testConstructorCustomLang( self ):
 		class __WorkflowIgnitorSub( WorkflowIgnitorMock ):
 			def _getMockConfig( self ):
@@ -149,5 +166,4 @@ class testWorkflowIgnitor( BaseTestCase ):
 		with patch( 'argparse.ArgumentParser', return_value = parser ) as argParserMock:
 			WorkflowIgnitor._registerCommandParser( mock )
 			
-			argParserMock.assert_called_once_with( prog = 'foo', description = 'bar' )
-			self.assertEqual( parser, mock.parser, 'Invalid mock.parser value' )
+			self.assertIsInstance( mock.cli, CliHandler, 'Invalid mock.cli type' )

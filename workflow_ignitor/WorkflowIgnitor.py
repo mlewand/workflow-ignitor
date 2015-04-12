@@ -1,12 +1,12 @@
 
 import os
 import json
-import argparse
 
 from workflow_ignitor.controller.IssueController import IssueController
 from workflow_ignitor.Integration import Integration
 from workflow_ignitor.Project import Project
 from workflow_ignitor.Configurable import Configurable
+from workflow_ignitor.CliHandler import CliHandler
 
 class WorkflowIgnitor( Configurable ):
 	
@@ -24,7 +24,15 @@ class WorkflowIgnitor( Configurable ):
 		self._loadControllers()
 		
 	def start( self, args ):
-		pass
+		ret = self.cli.parse( args )
+		
+		if not ret:
+			# If invalid CLI parameters were given, leave the app.
+			# "Unix programs generally use 2 for command line syntax errors and 1 for all other kind of errors."
+			# https://docs.python.org/2/library/sys.html#sys.exit
+			exit( 2 )
+		else:
+			ret[ 0 ].process( ret[ 1 ] )
 	
 	def registerIntegration( self, IntegrationType ):
 		
@@ -61,6 +69,7 @@ class WorkflowIgnitor( Configurable ):
 	def _loadControllers( self ):
 		self.issues = IssueController( self )
 		self.issues.attach()
+		self.cli.registerController( self.issues )
 
 	def _loadConfig( self ):
 		'''
@@ -93,5 +102,5 @@ class WorkflowIgnitor( Configurable ):
 			return hFile.read()
 	
 	def _registerCommandParser( self ):
-		appLang = self.lang[ 'app' ]
-		self.parser = argparse.ArgumentParser( prog = appLang[ 'name' ], description = appLang[ 'descr' ] )
+		self.cli = CliHandler( self )
+	

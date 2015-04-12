@@ -1,6 +1,13 @@
 
 class Controller:
 	
+	'''
+	Value that this controller is going to be invoked with from CLI, e.g. for "issues" it's going to be reachable with: "app.py issues".
+	
+	This string is mandatory.
+	'''
+	cliAction = ''
+	
 	def __init__( self, owner ):
 		'''
 		Constructor for Controller.
@@ -17,7 +24,7 @@ class Controller:
 		'''
 		Called when controller is finally attached to the main WorkflowIgnitor instance.
 		'''
-		self._registerCommands( self.owner.parser )
+		pass
 	
 	def _registerCommands( self, argParser ):
 		'''
