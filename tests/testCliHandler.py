@@ -79,8 +79,11 @@ class testCliHandler( BaseTestCase ):
 		lang = {
 			"app": {
 				"name": "foo",
-				"descr": "bar"
-			}
+				"descr": "bar",
+				"cli": {
+					"project": "Proj help"
+				}
+			},
 		}
 		mock = Mock()
 		mock.owner.lang = lang
@@ -89,5 +92,6 @@ class testCliHandler( BaseTestCase ):
 			CliHandler._createParser( mock )
 			
 			argParserMock.assert_called_once_with( prog = 'foo', description = 'bar' )
+			argParserMock().add_argument.assert_called_once_with( '--project', '-p', help = 'Proj help', metavar = 'project' )
 			self.assertEqual( parser, mock.parser, 'Invalid mock.parser value' )
 

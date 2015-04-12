@@ -7,14 +7,19 @@ from workflow_ignitor.issue.IssueIntegration import IssueIntegration
 
 class IssueController( Controller ):
 	
-	_TextParser = TextParser
-	
 	'''
 	Value that this controller is going to be invoked with from CLI, e.g. for "issues" it's going to be reachable with: "app.py issues".
 	
 	This string is mandatory.
 	'''
 	cliAction = 'issues'
+	
+	_TextParser = TextParser
+	
+	'''
+	A mapping for builtin method, so we can mock it in tests.
+	'''
+	_readCliLine = input
 	
 	def process( self, args ):
 		'''
@@ -32,15 +37,20 @@ class IssueController( Controller ):
 		
 		issueText = ''
 		errorPrefix = ''
+		lang = self.owner.lang[ 'app' ][ 'issues' ]
 		
-		if not args.file:
+		if args.stdin == True:
 			stdInput = sys.stdin.readlines()
 			issueText = ''.join( stdInput )
 			errorPrefix = 'Empty buffer given to stdin'
-		else:
+		elif args.file and isinstance( args.file, str ):
 			with open( args.file, 'r' ) as hFile:
 				issueText = ''.join( hFile.readlines() )
 			errorPrefix = 'The file is empty'
+		else:
+			title = self._readCliLine( lang[ 'create' ][ 'title' ] )
+			descr = self._readCliLine( lang[ 'create' ][ 'descr' ] )
+			issueText = '{0}\n\n{1}'.format( title, descr )
 		
 		issueText = issueText.strip()
 		
@@ -70,7 +80,10 @@ class IssueController( Controller ):
 		cliLang = self.owner.lang[ 'app' ][ 'issues' ][ 'cli' ]
 		
 		argParser.add_argument( 'subAction', help = cliLang[ 'issuesSubAction' ], choices = [ 'create', 'close' ] )
-		argParser.add_argument( '--file', help = cliLang[ 'file' ], metavar = 'srcFile' )
+		# Mutaly exclusive group, meaning that only one of the params can be set at a time.
+		inputSwitchGroup = argParser.add_mutually_exclusive_group()
+		inputSwitchGroup.add_argument( '--file', help = cliLang[ 'file' ], metavar = 'srcFile' )
+		inputSwitchGroup.add_argument( '--stdin', help = cliLang[ 'stdin' ], action = 'store_true' )
 	
 	def _reportIssue( self, issue, project ):
 		'''
@@ -79,4 +92,3 @@ class IssueController( Controller ):
 		integrations = self.owner.getIntegrations( IssueIntegration )
 		
 		list( map( lambda x: x.createIssue( issue, project ), integrations ) )
-	

@@ -15,6 +15,8 @@ class WorkflowIgnitor( Configurable ):
 	'''
 	curProject = ''
 	
+	_CliHandlerType = CliHandler
+	
 	def __init__( self ):
 		cfg = self._loadConfig()
 		super().__init__( cfg )
@@ -120,5 +122,5 @@ class WorkflowIgnitor( Configurable ):
 			return hFile.read()
 	
 	def _registerCommandParser( self ):
-		self.cli = CliHandler( self )
+		self.cli = self._CliHandlerType( self )
 	

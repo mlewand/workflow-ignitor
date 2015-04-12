@@ -169,16 +169,10 @@ class testWorkflowIgnitor( BaseTestCase ):
 		self.assertEqual( 'projId', mock.curProject, 'Invalid curProject property' )
 	
 	def testRegisterCommandParser( self ):
-		lang = {
-			"app": {
-				"name": "foo",
-				"descr": "bar"
-			}
-		}
+		class _CliHandlerType( Mock ):
+			pass
+		
 		mock = Mock()
-		mock.lang = lang
-		parser = Mock()
-		with patch( 'argparse.ArgumentParser', return_value = parser ) as argParserMock:
-			WorkflowIgnitor._registerCommandParser( mock )
-			
-			self.assertIsInstance( mock.cli, CliHandler, 'Invalid mock.cli type' )
+		mock._CliHandlerType = _CliHandlerType
+		WorkflowIgnitor._registerCommandParser( mock )
+		self.assertIsInstance( mock.cli, _CliHandlerType, 'Invalid mock.cli type' )
