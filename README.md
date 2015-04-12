@@ -79,4 +79,4 @@ Issue creation by default takes source text from stdin (you might also provide i
 python3 cli.py issues create
 ```
 
-Enter title / descr and send a EOF character ( `CTRL+D` at *nix and `CTRL+Z` on Windows ).
+Enter title / descr and send a EOF character (`CTRL+D` at *nix and `CTRL+Z` on Windows).
