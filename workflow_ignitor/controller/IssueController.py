@@ -70,7 +70,10 @@ class IssueController( Controller ):
 		cliLang = self.owner.lang[ 'app' ][ 'issues' ][ 'cli' ]
 		
 		argParser.add_argument( 'subAction', help = cliLang[ 'issuesSubAction' ], choices = [ 'create', 'close' ] )
-		argParser.add_argument( '--file', help = cliLang[ 'file' ], metavar = 'srcFile' )
+		# Mutaly exclusive group, meaning that only one of the params can be set at a time.
+		inputSwitchGroup = argParser.add_mutually_exclusive_group()
+		inputSwitchGroup.add_argument( '--file', help = cliLang[ 'file' ], metavar = 'srcFile' )
+		inputSwitchGroup.add_argument( '--stdin', help = cliLang[ 'stdin' ], action = 'store_true' )
 	
 	def _reportIssue( self, issue, project ):
 		'''

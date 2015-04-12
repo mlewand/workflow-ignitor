@@ -6,7 +6,8 @@
 			"cli": {
 				"issuesAction": "Issues manipulation.",
 				"issuesSubAction": "Subcommand to be performed.",
-				"file": "File to be used as an issue source."
+				"file": "File to be used as an issue source.",
+				"stdin": "If set will read issue source form stdin."
 			}
 		},
 		"cli": {
