@@ -26,7 +26,11 @@ class WorkflowIgnitor( Configurable ):
 		'''
 		self._integrations = list()
 		
-		self._loadLang( cfg[ 'lang' ] if 'lang' in cfg.keys() else 'en' )
+		langCode = 'en'
+		if 'app' in cfg.keys() and 'lang' in cfg[ 'app' ]:
+			langCode = cfg[ 'app' ][ 'lang' ]
+		
+		self._loadLang( langCode )
 		self._registerCommandParser()
 		self._loadControllers()
 		

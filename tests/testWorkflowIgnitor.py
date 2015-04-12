@@ -65,7 +65,9 @@ class testWorkflowIgnitor( BaseTestCase ):
 	def testConstructorCustomLang( self ):
 		class __WorkflowIgnitorSub( WorkflowIgnitorMock ):
 			def _getMockConfig( self ):
-				return { 'lang': 'nl' }
+				return {
+					'app': { 'lang': 'nl' }
+				}
 		
 		instance = __WorkflowIgnitorSub()
 		instance._loadLang.assert_called_once_with( 'nl' )
