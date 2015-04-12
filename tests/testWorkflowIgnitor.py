@@ -41,11 +41,18 @@ class testWorkflowIgnitor( BaseTestCase ):
 	
 	def testStart( self ):
 		mock = Mock()
+		mock.getConfig = Mock( return_value = 'foo' )
 		parsingResult = ( Mock(), Mock() )
 		mock.cli.parse = Mock( return_value = parsingResult )
+		
 		WorkflowIgnitor.start( mock, [] )
 		
+		mock.getConfig.assert_called_once_with( 'tmp.currentProject' )
+		self.assertEqual( 'foo', mock.curProject, 'Invalid curProject property' )
+		
 		parsingResult[ 0 ].process.assert_called_once_with( parsingResult[ 1 ] )
+		
+		mock._loadCliSettings.assert_called_once_with( parsingResult[ 1 ] )
 	
 	def testStartInvalid( self ):
 		'''
@@ -152,6 +159,14 @@ class testWorkflowIgnitor( BaseTestCase ):
 		mock = Mock()
 		WorkflowIgnitor._loadControllers( mock )
 		self.assertIsInstance( mock.issues, IssueController )
+	
+	def testLoadCliSettings( self ):
+		mock = Mock()
+		args = Mock()
+		args.project = 'projId'
+		WorkflowIgnitor._loadCliSettings( mock, args )
+		
+		self.assertEqual( 'projId', mock.curProject, 'Invalid curProject property' )
 	
 	def testRegisterCommandParser( self ):
 		lang = {

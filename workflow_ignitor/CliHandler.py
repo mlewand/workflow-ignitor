@@ -43,4 +43,5 @@ class CliHandler:
 	def _createParser( self ):
 		appLang = self.owner.lang[ 'app' ]
 		self.parser = argparse.ArgumentParser( prog = appLang[ 'name' ], description = appLang[ 'descr' ] )
+		self.parser.add_argument( '--project', '-p', help = appLang[ 'cli' ][ 'project' ], metavar = 'project' )
 	

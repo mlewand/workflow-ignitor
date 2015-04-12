@@ -8,6 +8,9 @@
 				"issuesSubAction": "Subcommand to be performed.",
 				"file": "File to be used as an issue source."
 			}
+		},
+		"cli": {
+			"project": "Current project id, defaults to tmp.currentProject config."
 		}
 	}
 }
