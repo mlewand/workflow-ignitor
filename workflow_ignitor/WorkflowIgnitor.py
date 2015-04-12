@@ -69,9 +69,12 @@ class WorkflowIgnitor( Configurable ):
 		if not curProj:
 			raise RuntimeError( 'Missing config: tmp.currentProject' )
 		
-		projConfig = self.getConfig( 'projects.' + curProj )
+		try:
+			projConfig = self.getConfig( 'projects.' + curProj )
 		
-		return Project( curProj, projConfig[ 'path' ], config = projConfig )
+			return Project( curProj, projConfig[ 'path' ], config = projConfig )
+		except KeyError:
+			raise KeyError( 'Project "{0}" not found. Please check config.json.'.format( curProj ) )
 
 	def _loadControllers( self ):
 		self.issues = IssueController( self )
