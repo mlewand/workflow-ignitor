@@ -4,6 +4,7 @@ import sys
 from workflow_ignitor.controller.Controller import Controller
 from workflow_ignitor.issue.parser.TextParser import TextParser, MissingContentError
 from workflow_ignitor.issue.IssueIntegration import IssueIntegration
+from workflow_ignitor.issue.Issue import Issue
 
 class IssueController( Controller ):
 	
@@ -55,6 +56,20 @@ class IssueController( Controller ):
 		# Reports the issue.
 		self.reportIssueFromText( issueText )
 	
+	def actionClose( self, args ):
+		'''
+		Closes the issue.
+		'''
+		issueId = args.id
+		
+		if issueId == None:
+			raise RuntimeError( 'No issue id provided.' )
+		
+		project = self.owner.getProject()
+		issue = self._getIssueById( issueId, project )
+		integrations = self.owner.getIntegrations( IssueIntegration )
+		list( map( lambda x: x.closeIssue( issue, project ), integrations ) )
+	
 	def reportIssueFromText( self, issueText ):
 		'''
 		Reports issue based on plain text provided as `issueText`.
@@ -66,6 +81,9 @@ class IssueController( Controller ):
 			self._reportIssue( issue, self.owner.getProject() )
 		except MissingContentError as err:
 			raise ValueError( str( err ) )
+	
+	def _getIssueById( self, issueId, project ):
+		return Issue( '', id = issueId )
 	
 	def _registerCommands( self, argParser ):
 		
@@ -79,6 +97,7 @@ class IssueController( Controller ):
 		inputSwitchGroup = argParser.add_mutually_exclusive_group()
 		inputSwitchGroup.add_argument( '--file', help = cliLang[ 'file' ], metavar = 'srcFile' )
 		inputSwitchGroup.add_argument( '--stdin', help = cliLang[ 'stdin' ], action = 'store_true' )
+		inputSwitchGroup.add_argument( '--id', help = cliLang[ 'id' ], type = int )
 	
 	def _reportIssue( self, issue, project ):
 		'''

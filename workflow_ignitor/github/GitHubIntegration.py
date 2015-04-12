@@ -23,3 +23,14 @@ class GitHubIntegration( IssueIntegration ):
 		repo.create_issue( issue.title, issue.descr )
 		
 		print( '-- GitHubIntegration log: issue created' )
+	
+	def closeIssue( self, issue, project ):
+		githubRepo = project.getConfig( 'github.repo.name' )
+		
+		if not githubRepo:
+			raise RuntimeError( 'Missing config: github.repo.name' )
+		
+		repo = self.github.get_user().get_repo( githubRepo )
+		issue = repo.get_issue( issue.id )
+		issue.edit( state = 'closed' )
+	

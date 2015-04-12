@@ -126,4 +126,15 @@ class testIssueController( BaseTestCase ):
 		args.file = os.sep.join( ( testBaseDir, '_fixtures', 'emptyFile.md' ) )
 	
 		self.assertRaisesRegex( RuntimeError, '^The file is empty. You\'re supposed to provide issue content with stdin\.$', IssueController.actionCreate, mock, args )
-		
+	
+	def testActionClose( self ):
+		mock = Mock()
+		args = Mock()
+		pass
+	
+	def testActionCloseNoIdInArgs( self ):
+		mock = Mock()
+		args = Mock()
+		args.id = None
+		self.assertRaisesRegex( RuntimeError, '^No issue id provided.$', IssueController.actionClose, mock, args )
+	
