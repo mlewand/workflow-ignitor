@@ -16,8 +16,41 @@ class testCliHandler( BaseTestCase ):
 		self.assertIsInstance( mock._actionMapping, dict )
 		self.assertDictEqual( mock._actionMapping, {} )
 		self.assertEqual( self.app, mock.owner, 'Invalid owner property' )
-		self.assertEqual( mock._createParser(), mock.parser, 'Invalid praser' )
-		
+		mock._createParser.assert_called_once_with()
+	
+	def testParse( self ):
+		mock = Mock()
+		controllerMock = Mock()
+		parsedArgs = Mock()
+		mock._actionMapping = { 'foo': controllerMock }
+		mock.parser.parse_args = Mock( return_value = parsedArgs )
+		args = [ 'app.py', 'foo', 'bar' ]
+		ret = CliHandler.parse( mock, args )
+		mock.parser.parse_args.assert_called_once_with( [ 'foo', 'bar' ] )
+		self.assertEqual( ( controllerMock, parsedArgs ), ret, 'Invalid return value' )
+	
+	def testParseToLittleArgs( self ):
+		'''
+		To few arguments given.
+		'''
+		mock = Mock()
+		parser = mock.parser
+		ret = CliHandler.parse( mock, [ 'app.py' ] )
+		self.assertFalse( ret, 'Invalid return value' )
+		parser.print_help.assert_called_once_with()
+		self.assertEqual( 0, parser.parse_args.call_count, 'Invalid parser.parse_args call count' )
+	
+	def testParseUnknownController( self ):
+		'''
+		Unknown controller "bom". The only registered controller (action) is "foo".
+		'''
+		mock = Mock()
+		parser = mock.parser
+		mock._actionMapping = { 'foo': 'bar' }
+		ret = CliHandler.parse( mock, [ 'app.py', 'bom' ] )
+		self.assertFalse( ret, 'Invalid return value' )
+		parser.print_help.assert_called_once_with()
+		self.assertEqual( 0, parser.parse_args.call_count, 'Invalid parser.parse_args call count' )
 	
 	def testRegisterController( self ):
 		controller = Mock()
