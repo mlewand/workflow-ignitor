@@ -14,19 +14,14 @@ class IssueController( Controller ):
 	'''
 	cliAction = 'issues'
 	
+	cliSubActions = [ 'create', 'close' ]
+	
 	_TextParser = TextParser
 	
 	'''
 	A mapping for builtin method, so we can mock it in tests.
 	'''
 	_readCliLine = input
-	
-	def process( self, args ):
-		'''
-		Looks for args, and based on that executes proper logic.
-		'''
-		if args.subAction == 'create':
-			self.actionCreate( args )
 	
 	def actionCreate( self, args ):
 		'''
@@ -79,7 +74,7 @@ class IssueController( Controller ):
 		
 		cliLang = self.owner.lang[ 'app' ][ 'issues' ][ 'cli' ]
 		
-		argParser.add_argument( 'subAction', help = cliLang[ 'issuesSubAction' ], choices = [ 'create', 'close' ] )
+		argParser.add_argument( 'subAction', help = cliLang[ 'issuesSubAction' ], choices = self.cliSubActions )
 		# Mutaly exclusive group, meaning that only one of the params can be set at a time.
 		inputSwitchGroup = argParser.add_mutually_exclusive_group()
 		inputSwitchGroup.add_argument( '--file', help = cliLang[ 'file' ], metavar = 'srcFile' )

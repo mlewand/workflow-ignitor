@@ -8,6 +8,8 @@ class Controller:
 	'''
 	cliAction = ''
 	
+	cliSubActions = []
+	
 	def __init__( self, owner ):
 		'''
 		Constructor for Controller.
@@ -19,6 +21,16 @@ class Controller:
 			self.owner = WorkflowIgnitor()
 		
 		self.owner = owner
+	
+	def process( self, args ):
+		'''
+		Looks for args, and based on that executes proper logic.
+		'''
+		
+		if self.cliSubActions:
+			action = 'action' + str( args.subAction ).capitalize()
+			if self.cliSubActions and hasattr( self, action):
+				getattr( self, action )( args )
 	
 	def attach( self ):
 		'''
