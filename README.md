@@ -25,6 +25,7 @@ At the begining most likely you'll need to set your configuration. You need to s
 For that create `config.json` based on `config.json.dist` file and:
 * [Add necessary projects](#change-current-project).
 * [Set current project](#change-current-project).
+* Provide your GitHub token if you want to integrate with it.
 
 ## Usage
 
