@@ -1,0 +1,22 @@
+{
+	"app": {
+		"name": "Workflow Ignitor",
+		"descr": "Niewielka ulatwiajaca prace z projektami.",
+		"issues": {
+			"cli": {
+				"issuesAction": "Zarzadzanie issues.",
+				"issuesSubAction": "Komenda dodatkowa.",
+				"file": "Plik ktory ma zostac uzyty jako zrodlo dla issue.",
+				"id": "Issue ID.",
+				"stdin": "Jesli ustawiony, odczyta zrodlo issue bezposredio z stdin."
+			},
+			"create": {
+				"title": "Tytul issue: ",
+				"descr": "Opis issue: "
+			}
+		},
+		"cli": {
+			"project": "Id projektu, domyslnie tmp.currentProject pliku konfiguracyjnego."
+		}
+	}
+}
