@@ -38,4 +38,4 @@ class Configurable:
 			else:
 				curScope = curScope[ curPart ]
 		
-		return curScope[ parts[ -1 ] ]
+		return curScope[ parts[ -1 ] ] if parts[ -1 ] in curScope else None
