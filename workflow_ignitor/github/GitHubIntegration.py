@@ -40,3 +40,8 @@ class GitHubIntegration( IssueIntegration ):
 		
 		return repoHost.get_repo( repoName )
 	
+	def getIssueUrl( self, issue, project ):
+		if issue.id == None:
+			raise ValueError( 'Issue doesn\'t have an id.' )
+		
+		return 'https://github.com/mlewand/{projectName}/issues/{0.id}'.format( issue, projectName = project.getConfig( 'github.repo.name' ) )

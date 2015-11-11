@@ -60,3 +60,22 @@ class testGitHubIntegration( BaseTestCase ):
 		
 		self.assertRaisesRegex( RuntimeError, '^Missing config: github.repo.name$', self.mock._getRepo, proj )
 	
+	def testGetIssueUrl( self ):
+	
+		issue = Mock()
+		issue.id = 202
+		proj = Mock()
+		proj.getConfig = Mock( return_value = 'fooBAR' )
+		
+		self.assertEqual( 'https://github.com/mlewand/fooBAR/issues/202', self.mock.getIssueUrl( issue, proj ), 'Invalid URL returned' )
+		
+		proj.getConfig.assert_called_once_with( 'github.repo.name' )
+	
+	
+	def testGetIssueUrlNoId( self ):
+		
+		issue = Mock()
+		issue.id = None
+		proj = Mock()
+		
+		self.assertRaisesRegex( ValueError, '^Issue doesn\'t have an id.$', self.mock.getIssueUrl, issue, proj )
