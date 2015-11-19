@@ -53,6 +53,6 @@ class GitHubIntegration( IssueIntegration ):
 		
 		projectName = project.getConfig( 'github.repo.name' )
 		organization = project.getConfig( 'github.repo.organization' )
-		repoOwner = organization if organization else 'mlewand'
+		repoOwner = organization if organization else project.getConfig( 'github.repo.name' )
 		
 		return 'https://github.com/{1}/{2}/issues/{0.id}'.format( issue, repoOwner, projectName )
