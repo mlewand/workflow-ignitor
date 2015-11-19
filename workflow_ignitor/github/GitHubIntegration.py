@@ -41,7 +41,18 @@ class GitHubIntegration( IssueIntegration ):
 		return repoHost.get_repo( repoName )
 	
 	def getIssueUrl( self, issue, project ):
+		'''
+		Returns an issue URL.
+		
+		:param issue: :class:`workflow_ignitor.issue.Issue`
+		:param project: :class:`workflow_ignitor.Projcet`
+		:type: str
+		'''
 		if issue.id == None:
 			raise ValueError( 'Issue doesn\'t have an id.' )
 		
-		return 'https://github.com/mlewand/{projectName}/issues/{0.id}'.format( issue, projectName = project.getConfig( 'github.repo.name' ) )
+		projectName = project.getConfig( 'github.repo.name' )
+		organization = project.getConfig( 'github.repo.organization' )
+		repoOwner = organization if organization else 'mlewand'
+		
+		return 'https://github.com/{1}/{2}/issues/{0.id}'.format( issue, repoOwner, projectName )

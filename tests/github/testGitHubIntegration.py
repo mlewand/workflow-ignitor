@@ -65,12 +65,22 @@ class testGitHubIntegration( BaseTestCase ):
 		issue = Mock()
 		issue.id = 202
 		proj = Mock()
-		proj.getConfig = Mock( return_value = 'fooBAR' )
+		proj.getConfig = Mock( side_effect = ( 'fooBAR', None ) )
 		
 		self.assertEqual( 'https://github.com/mlewand/fooBAR/issues/202', self.mock.getIssueUrl( issue, proj ), 'Invalid URL returned' )
 		
-		proj.getConfig.assert_called_once_with( 'github.repo.name' )
+		#Mock.assert_any_call
+		proj.getConfig.assert_any_call( 'github.repo.name' )
+		proj.getConfig.assert_any_call( 'github.repo.organization' )
 	
+	def testGetIssueUrlOrganization( self ):
+		
+		issue = Mock()
+		issue.id = 202
+		proj = Mock()
+		proj.getConfig = Mock( side_effect = ( 'fooBAR', 'coolOrganization' ) )
+		
+		self.assertEqual( 'https://github.com/coolOrganization/fooBAR/issues/202', self.mock.getIssueUrl( issue, proj ), 'Invalid URL returned' )
 	
 	def testGetIssueUrlNoId( self ):
 		
