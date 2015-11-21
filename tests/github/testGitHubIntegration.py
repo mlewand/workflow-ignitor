@@ -21,6 +21,21 @@ class testGitHubIntegration( BaseTestCase ):
 		
 		self.mock._getRepo.assert_called_once_with( proj )
 		self.mock._getRepo().create_issue.assert_called_once_with( 'foo', 'bar' )
+		
+	def testCreateIssueSetsId( self ):
+		'''
+		We need to make sure that new id is assigned to issue object.
+		'''
+		
+		issue = Mock()
+		createdIssueMock = Mock()
+		createdIssueMock.id = 11033
+		self.mock._getRepo = Mock()
+		self.mock._getRepo().create_issue = Mock( return_value = createdIssueMock )
+		
+		self.mock.createIssue( issue, Mock() )
+		
+		self.assertEqual( 11033, issue.id, 'Issue id was not updated' )
 	
 	def testGetRepo( self ):
 		proj = Mock()

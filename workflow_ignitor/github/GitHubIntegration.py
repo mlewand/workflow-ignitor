@@ -14,9 +14,12 @@ class GitHubIntegration( IssueIntegration ):
 	
 	def createIssue( self, issue, project ):
 		repo = self._getRepo( project )
-		repo.create_issue( issue.title, issue.descr )
+		ghIssue = repo.create_issue( issue.title, issue.descr )
 		
 		print( '-- GitHubIntegration log: issue created' )
+		
+		if ghIssue.id:
+			issue.id = ghIssue.id
 	
 	def closeIssue( self, issue, project ):
 		repo = self._getRepo( project )
