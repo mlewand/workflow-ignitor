@@ -80,7 +80,8 @@ class testGitHubIntegration( BaseTestCase ):
 		issue = Mock()
 		issue.id = 202
 		proj = Mock()
-		proj.getConfig = Mock( side_effect = ( 'fooBAR', None, 'userName' ) )
+		proj.getConfig = Mock( side_effect = ( 'fooBAR', None ) )
+		self.owner.getConfig = Mock( return_value = 'userName' )
 		
 		self.assertEqual( 'https://github.com/userName/fooBAR/issues/202', self.mock.getIssueUrl( issue, proj ), 'Invalid URL returned' )
 		
