@@ -1,5 +1,6 @@
 
 import sys
+import webbrowser
 
 from workflow_ignitor.controller.Controller import Controller
 from workflow_ignitor.issue.parser.TextParser import TextParser, MissingContentError
@@ -104,5 +105,13 @@ class IssueController( Controller ):
 		Reports issue to a given project.
 		'''
 		integrations = self.owner.getIntegrations( IssueIntegration )
+		openBrowserAfterCreation = self.owner.getConfig( 'app.issues.openAfterCreated' ) == True
 		
-		list( map( lambda x: x.createIssue( issue, project ), integrations ) )
+		for integr in integrations:
+			integr.createIssue( issue, project )
+			
+			if openBrowserAfterCreation and issue.id and integr.getIssueUrl( issue, project ):
+				self._openBrowser( integr.getIssueUrl( issue, project ) )
+	
+	def _openBrowser( self, url ):
+		webbrowser.open_new_tab( url )
