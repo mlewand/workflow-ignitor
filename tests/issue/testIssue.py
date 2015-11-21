@@ -21,4 +21,17 @@ class testIssue( BaseTestCase ):
 		
 		self.assertEqual( 'foo', instance.title, 'Invalid title' )
 		self.assertEqual( 'bar', instance.descr, 'Invalid description' )
-	
+		
+	def testExists( self ):
+		'''
+		Tests constructor using keyword arguments.
+		'''
+		instance = Issue( 'foo', id = 11000 )
+		self.assertTrue( instance.exists(), 'Invalid ret value' )
+		
+	def testExistsInvalid( self ):
+		'''
+		Tests constructor using keyword arguments.
+		'''
+		instance = Issue( 'foo' )
+		self.assertFalse( instance.exists(), 'Invalid ret value' )
