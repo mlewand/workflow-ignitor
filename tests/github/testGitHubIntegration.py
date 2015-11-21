@@ -29,7 +29,7 @@ class testGitHubIntegration( BaseTestCase ):
 		
 		issue = Mock()
 		createdIssueMock = Mock()
-		createdIssueMock.id = 11033
+		createdIssueMock.number = 11033
 		self.mock._getRepo = Mock()
 		self.mock._getRepo().create_issue = Mock( return_value = createdIssueMock )
 		
