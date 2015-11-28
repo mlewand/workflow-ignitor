@@ -1,9 +1,13 @@
 {
 	"app": {
-		"lang": "en"
+		"lang": "en",
+		"issues": {
+			"openAfterCreated": false
+		}
 	},
 	"github": {
-		"token": ""
+		"token": "",
+		"name": "userName"
 	},
 	"tmp": {
 		"currentProject": "privateProject"

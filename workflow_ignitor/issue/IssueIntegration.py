@@ -11,3 +11,6 @@ class IssueIntegration( Integration ):
 	
 	def createIssue( self, issue, project ):
 		raise NotImplementedError()
+	
+	def getIssueUrl( self, issue, project ):
+		raise NotImplementedError()

@@ -127,6 +127,22 @@ class testIssueController( BaseTestCase ):
 	
 		self.assertRaisesRegex( RuntimeError, '^The file is empty. You\'re supposed to provide issue content with stdin\.$', IssueController.actionCreate, mock, args )
 	
+	def testReportIssueWebbrowserOpen( self ):
+		'''
+		Web browser should be opened if issue is created and a proper config is set.
+		'''
+		
+		issue = Mock()
+		project = Mock()
+		integrations = [ Mock(), Mock() ]
+		self.owner.getIntegrations = Mock( return_value = integrations )
+		self.owner.getConfig = Mock( return_value = True )
+		
+		self.mock._openBrowser = Mock()
+		self.mock._reportIssue( issue, project )
+		
+		self.assertEqual( 2, self.mock._openBrowser.call_count, 'Invalid _openBrowser call count' )
+	
 	def testActionClose( self ):
 		mock = Mock()
 		args = Mock()

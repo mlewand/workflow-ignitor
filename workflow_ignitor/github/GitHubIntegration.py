@@ -14,9 +14,12 @@ class GitHubIntegration( IssueIntegration ):
 	
 	def createIssue( self, issue, project ):
 		repo = self._getRepo( project )
-		repo.create_issue( issue.title, issue.descr )
+		ghIssue = repo.create_issue( issue.title, issue.descr )
 		
 		print( '-- GitHubIntegration log: issue created' )
+		
+		if ghIssue.id:
+			issue.id = ghIssue.number
 	
 	def closeIssue( self, issue, project ):
 		repo = self._getRepo( project )
@@ -40,3 +43,19 @@ class GitHubIntegration( IssueIntegration ):
 		
 		return repoHost.get_repo( repoName )
 	
+	def getIssueUrl( self, issue, project ):
+		'''
+		Returns an issue URL.
+		
+		:param issue: :class:`workflow_ignitor.issue.Issue`
+		:param project: :class:`workflow_ignitor.Projcet`
+		:type: str
+		'''
+		if issue.id == None:
+			raise ValueError( 'Issue doesn\'t have an id.' )
+		
+		projectName = project.getConfig( 'github.repo.name' )
+		organization = project.getConfig( 'github.repo.organization' )
+		repoOwner = organization if organization else self.owner.getConfig( 'github.name' )
+		
+		return 'https://github.com/{1}/{2}/issues/{0.id}'.format( issue, repoOwner, projectName )

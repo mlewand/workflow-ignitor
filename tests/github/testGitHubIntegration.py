@@ -21,6 +21,21 @@ class testGitHubIntegration( BaseTestCase ):
 		
 		self.mock._getRepo.assert_called_once_with( proj )
 		self.mock._getRepo().create_issue.assert_called_once_with( 'foo', 'bar' )
+		
+	def testCreateIssueSetsId( self ):
+		'''
+		We need to make sure that new id is assigned to issue object.
+		'''
+		
+		issue = Mock()
+		createdIssueMock = Mock()
+		createdIssueMock.number = 11033
+		self.mock._getRepo = Mock()
+		self.mock._getRepo().create_issue = Mock( return_value = createdIssueMock )
+		
+		self.mock.createIssue( issue, Mock() )
+		
+		self.assertEqual( 11033, issue.id, 'Issue id was not updated' )
 	
 	def testGetRepo( self ):
 		proj = Mock()
@@ -60,3 +75,32 @@ class testGitHubIntegration( BaseTestCase ):
 		
 		self.assertRaisesRegex( RuntimeError, '^Missing config: github.repo.name$', self.mock._getRepo, proj )
 	
+	def testGetIssueUrl( self ):
+	
+		issue = Mock()
+		issue.id = 202
+		proj = Mock()
+		proj.getConfig = Mock( side_effect = ( 'fooBAR', None ) )
+		self.owner.getConfig = Mock( return_value = 'userName' )
+		
+		self.assertEqual( 'https://github.com/userName/fooBAR/issues/202', self.mock.getIssueUrl( issue, proj ), 'Invalid URL returned' )
+		
+		proj.getConfig.assert_any_call( 'github.repo.name' )
+		proj.getConfig.assert_any_call( 'github.repo.organization' )
+	
+	def testGetIssueUrlOrganization( self ):
+		
+		issue = Mock()
+		issue.id = 202
+		proj = Mock()
+		proj.getConfig = Mock( side_effect = ( 'fooBAR', 'coolOrganization' ) )
+		
+		self.assertEqual( 'https://github.com/coolOrganization/fooBAR/issues/202', self.mock.getIssueUrl( issue, proj ), 'Invalid URL returned' )
+	
+	def testGetIssueUrlNoId( self ):
+		
+		issue = Mock()
+		issue.id = None
+		proj = Mock()
+		
+		self.assertRaisesRegex( ValueError, '^Issue doesn\'t have an id.$', self.mock.getIssueUrl, issue, proj )
