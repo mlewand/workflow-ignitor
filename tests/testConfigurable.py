@@ -45,3 +45,10 @@ class Configurable( BaseTestCase ):
 		
 		self.mock._config = {}
 		self.assertEqual( None, self.mock.getConfig( 'abc.def.ghi' ), 'Invalid return value' )
+		
+	def testGetConfigInvalid2( self ):
+		
+		self.mock._config = {
+			"abc": {}
+		}
+		self.assertEqual( None, self.mock.getConfig( 'abc.def' ), 'Invalid return value' )

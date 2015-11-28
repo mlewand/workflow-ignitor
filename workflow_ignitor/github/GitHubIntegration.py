@@ -13,24 +13,30 @@ class GitHubIntegration( IssueIntegration ):
 		self.github = Github( self.githubToken )
 	
 	def createIssue( self, issue, project ):
-		
-		githubRepo = project.getConfig( 'github.repo.name' )
-		
-		if not githubRepo:
-			raise RuntimeError( 'Missing config: github.repo.name' )
-		
-		repo = self.github.get_user().get_repo( githubRepo )
+		repo = self._getRepo( project )
 		repo.create_issue( issue.title, issue.descr )
 		
 		print( '-- GitHubIntegration log: issue created' )
 	
 	def closeIssue( self, issue, project ):
-		githubRepo = project.getConfig( 'github.repo.name' )
-		
-		if not githubRepo:
-			raise RuntimeError( 'Missing config: github.repo.name' )
-		
-		repo = self.github.get_user().get_repo( githubRepo )
+		repo = self._getRepo( project )
 		issue = repo.get_issue( issue.id )
 		issue.edit( state = 'closed' )
+		
+	def _getRepo( self, project ):
+		'''
+		Returns a proper repository object based on given project.
+		
+		:param project: :class:`workflow_ignitor.Projcet`
+		:type: :class:`github.Repository.Repository` or None
+		'''
+		repoName = project.getConfig( 'github.repo.name' )
+		organization = project.getConfig( 'github.repo.organization' )
+		
+		if not repoName:
+			raise RuntimeError( 'Missing config: github.repo.name' )
+		
+		repoHost = self.github.get_organization( organization ) if organization else self.github.get_user()
+		
+		return repoHost.get_repo( repoName )
 	

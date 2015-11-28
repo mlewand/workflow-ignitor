@@ -11,30 +11,52 @@ class testGitHubIntegration( BaseTestCase ):
 	
 	def testCreateIssue( self ):
 		
-		githubMock = Mock()
 		issue = Mock()
 		issue.title = 'foo'
 		issue.descr = 'bar'
 		proj = Mock()
-		proj.getConfig = Mock( return_value = 'repoName' )
+		self.mock._getRepo = Mock()
 		
-		self.mock.github = githubMock
 		self.mock.createIssue( issue, proj )
 		
-		proj.getConfig.assert_called_once_with( 'github.repo.name' )
-		
-		githubMock.get_user.assert_called_once_with()
-		githubMock.get_user().get_repo.assert_called_once_with( 'repoName' )
-		githubMock.get_user().get_repo().create_issue.assert_called_once_with( 'foo', 'bar' )
+		self.mock._getRepo.assert_called_once_with( proj )
+		self.mock._getRepo().create_issue.assert_called_once_with( 'foo', 'bar' )
 	
-	def testCreateIssueInvalidProject( self ):
+	def testGetRepo( self ):
+		proj = Mock()
+		userMock = Mock()
+		userMock.get_repo = Mock()
+		# Return repo name in first getConfig call, but return None in second call (no organization).
+		proj.getConfig = Mock( side_effect = [ 'foo', None ] )
+		self.mock.github = Mock()
+		self.mock.github.get_user = Mock( return_value = userMock )
 		
-		issue = Mock()
-		issue.title = 'foo'
-		issue.descr = 'bar'
+		ret = self.mock._getRepo( proj )
+		
+		self.mock.github.get_user.assert_called_once_with()
+		userMock.get_repo.assert_called_once_with( 'foo' )
+		self.assertEqual( userMock.get_repo( 'foo' ), ret, 'Invalid return value' )
+	
+	def testGetRepoOrganization( self ):
+		proj = Mock()
+		orgMock = Mock()
+		orgMock.get_repo = Mock()
+		proj.getConfig = Mock( side_effect = [ 'foo', 'bar' ] )
+		self.mock.github = Mock()
+		self.mock.github.get_organization = Mock( return_value = orgMock )
+		
+		ret = self.mock._getRepo( proj )
+		
+		self.assertFalse( self.mock.github.get_user.called, 'get_user() should not be called' )
+		self.mock.github.get_organization.assert_called_once_with( 'bar' )
+		
+		orgMock.get_repo.assert_called_once_with( 'foo' )
+		self.assertEqual( orgMock.get_repo( 'foo' ), ret, 'Invalid return value' )
+		
+	
+	def testGetRepoMissingName( self ):
 		proj = Mock()
 		proj.getConfig = Mock( return_value = None )
 		
-		self.assertRaises( RuntimeError, self.mock.createIssue, issue, proj )
+		self.assertRaisesRegex( RuntimeError, '^Missing config: github.repo.name$', self.mock._getRepo, proj )
 	
-

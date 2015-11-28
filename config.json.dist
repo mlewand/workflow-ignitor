@@ -6,14 +6,23 @@
 		"token": ""
 	},
 	"tmp": {
-		"currentProject": "foobar"
+		"currentProject": "privateProject"
 	},
 	"projects": {
-		"foobar": {
+		"privateProject": {
 			"path": "/my/path/to/project",
 			"github": {
 				"repo": {
 					"name": "foobar"
+				}
+			}
+		},
+		"organizationProject": {
+			"path": "/my/path/to/organization/project",
+			"github": {
+				"repo": {
+					"name": "foobar",
+					"organization": "myAwesomeOrganization"
 				}
 			}
 		}
