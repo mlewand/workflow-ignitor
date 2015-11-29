@@ -15,6 +15,15 @@
 				"descr": "Issue desription: "
 			}
 		},
+		"gists": {
+			"cli": {
+				"gistsAction": "Gists manipulation.",
+				"gistsSubAction": "Subcommand to be performed.",
+				"files": "File to be uploaded as a Gist.",
+				"stdin": "If set will read use stdin for Gist content.",
+				"public": "If set gist will be shared as public"
+			}
+		},
 		"cli": {
 			"project": "Current project id, defaults to tmp.currentProject config."
 		}

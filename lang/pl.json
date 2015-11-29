@@ -15,6 +15,15 @@
 				"descr": "Opis issue: "
 			}
 		},
+		"gists": {
+			"cli": {
+				"gistsAction": "Zarzadzanie gistami.",
+				"gistsSubAction": "Komenda dodatkowa.",
+				"files": "Plik ktory zostanie wyslany jako gist.",
+				"stdin": "Jesli podany, gist zostanie odczytany z stdin.",
+				"public": "Jesli podany, gist zostanie udostepniony publicznie."
+			}
+		},
 		"cli": {
 			"project": "Id projektu, domyslnie tmp.currentProject pliku konfiguracyjnego."
 		}

@@ -3,6 +3,7 @@ import os
 import json
 
 from workflow_ignitor.controller.IssueController import IssueController
+from workflow_ignitor.controller.GistController import GistController
 from workflow_ignitor.Integration import Integration
 from workflow_ignitor.Project import Project
 from workflow_ignitor.Configurable import Configurable
@@ -86,6 +87,10 @@ class WorkflowIgnitor( Configurable ):
 		self.issues = IssueController( self )
 		self.issues.attach()
 		self.cli.registerController( self.issues )
+		
+		self.gists = GistController( self )
+		self.gists.attach()
+		self.cli.registerController( self.gists )
 
 	def _loadConfig( self ):
 		'''

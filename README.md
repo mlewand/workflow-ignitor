@@ -83,3 +83,11 @@ python3 cli.py issues create
 ```
 
 Enter title / descr and send a EOF character (`CTRL+D` at *nix and `CTRL+Z` on Windows).
+
+### Gist Creation
+
+```
+python3 cli.py gists create --files README.md cli.py --public
+```
+
+Note that gist will be uploaded as private if `--public` flag is not set.
